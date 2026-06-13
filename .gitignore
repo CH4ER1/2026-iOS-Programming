@@ -33,3 +33,6 @@ Carthage/Build/
 
 # 민감한 API 키 설정 파일 (Config.swift.example을 복사해서 사용)
 FinalProject/Config.swift
+
+# 발표 자료 (저장소에는 올리지 않음)
+발표대본.md
