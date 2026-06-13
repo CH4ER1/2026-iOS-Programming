@@ -3,8 +3,7 @@ import SwiftUI
 struct RecordingView: View {
 
     @ObservedObject var viewModel: DreamViewModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var navigateToConfirm = false
+    @Binding var path: [DreamRoute]
     @State private var ripple = false
     @State private var waveScale: [CGFloat] = [1, 1, 1]
 
@@ -124,7 +123,7 @@ struct RecordingView: View {
 
                 Button {
                     viewModel.stopRecording()
-                    navigateToConfirm = true
+                    path.append(.confirm)
                 } label: {
                     HStack(spacing: 10) {
                         Image(systemName: "stop.circle.fill")
@@ -153,9 +152,6 @@ struct RecordingView: View {
         }
         .navigationTitle("꿈 녹음")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(isPresented: $navigateToConfirm) {
-            ContentConfirmView(viewModel: viewModel)
-        }
         .onDisappear {
             if viewModel.isRecording { viewModel.stopRecording() }
         }
@@ -169,6 +165,6 @@ struct RecordingView: View {
 
 #Preview {
     NavigationStack {
-        RecordingView(viewModel: DreamViewModel())
+        RecordingView(viewModel: DreamViewModel(), path: .constant([]))
     }
 }

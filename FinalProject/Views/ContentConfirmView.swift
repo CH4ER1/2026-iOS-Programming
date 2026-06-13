@@ -3,13 +3,14 @@ import SwiftUI
 struct ContentConfirmView: View {
 
     @ObservedObject var viewModel: DreamViewModel
+    @Binding var path: [DreamRoute]
     @State private var editedText: String
-    @State private var navigateToResult = false
     @State private var isLoading = false
     @FocusState private var isTextFieldFocused: Bool
 
-    init(viewModel: DreamViewModel) {
+    init(viewModel: DreamViewModel, path: Binding<[DreamRoute]>) {
         self.viewModel = viewModel
+        self._path = path
         _editedText = State(initialValue: viewModel.recognizedText)
     }
 
@@ -123,9 +124,6 @@ struct ContentConfirmView: View {
         }
         .navigationTitle("내용 확인")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(isPresented: $navigateToResult) {
-            DreamResultView(viewModel: viewModel)
-        }
         .alert("오류", isPresented: $viewModel.showError) {
             Button("확인") { viewModel.showError = false }
         } message: {
@@ -142,7 +140,7 @@ struct ContentConfirmView: View {
             await viewModel.generateImage()
             await MainActor.run {
                 isLoading = false
-                navigateToResult = true
+                path.append(.result)
             }
         }
     }
@@ -294,6 +292,6 @@ struct SectionHeader: View {
             let vm = DreamViewModel()
             vm.recognizedText = "비가 많이 오는 날에 빗소리를 들으며 수업을 듣는 꿈을 꾸었다"
             return vm
-        }())
+        }(), path: .constant([]))
     }
 }

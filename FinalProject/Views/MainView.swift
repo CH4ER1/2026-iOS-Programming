@@ -1,11 +1,19 @@
 import SwiftUI
 
+enum DreamRoute: Hashable {
+    case recording
+    case confirm
+    case result
+    case list
+}
+
 struct MainView: View {
 
     @StateObject private var viewModel = DreamViewModel()
+    @State private var path: [DreamRoute] = []
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 LinearGradient(
                     colors: [Theme.bgTop, Theme.bgMid, Theme.bgBottom],
@@ -83,7 +91,7 @@ struct MainView: View {
                     }
 
                     VStack(spacing: 12) {
-                        NavigationLink(destination: RecordingView(viewModel: viewModel)) {
+                        NavigationLink(value: DreamRoute.recording) {
                             HStack(spacing: 10) {
                                 Image(systemName: "mic.fill")
                                     .font(.system(size: 16))
@@ -104,7 +112,7 @@ struct MainView: View {
                             .shadow(color: Color(hex: "0284C7").opacity(0.3), radius: 12, x: 0, y: 6)
                         }
 
-                        NavigationLink(destination: DreamListView(viewModel: viewModel)) {
+                        NavigationLink(value: DreamRoute.list) {
                             HStack(spacing: 10) {
                                 Image(systemName: "clock.fill")
                                     .font(.system(size: 15))
@@ -140,6 +148,18 @@ struct MainView: View {
                 }
             }
             .navigationBarHidden(true)
+            .navigationDestination(for: DreamRoute.self) { route in
+                switch route {
+                case .recording:
+                    RecordingView(viewModel: viewModel, path: $path)
+                case .confirm:
+                    ContentConfirmView(viewModel: viewModel, path: $path)
+                case .result:
+                    DreamResultView(viewModel: viewModel, path: $path)
+                case .list:
+                    DreamListView(viewModel: viewModel)
+                }
+            }
         }
     }
 

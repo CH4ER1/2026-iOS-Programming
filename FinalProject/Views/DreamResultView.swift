@@ -3,9 +3,7 @@ import SwiftUI
 struct DreamResultView: View {
 
     @ObservedObject var viewModel: DreamViewModel
-    @Environment(\.dismiss) private var dismiss
-    @State private var showShareSheet = false
-    @State private var imageToShare: UIImage? = nil
+    @Binding var path: [DreamRoute]
 
     var body: some View {
         ZStack {
@@ -166,15 +164,12 @@ struct DreamResultView: View {
 
                         HStack(spacing: 12) {
                             Button {
-                                if let image = viewModel.generatedImage {
-                                    imageToShare = image
-                                    showShareSheet = true
-                                }
+                                path.append(.list)
                             } label: {
                                 HStack(spacing: 6) {
-                                    Image(systemName: "square.and.arrow.up")
+                                    Image(systemName: "list.bullet")
                                         .font(.system(size: 15))
-                                    Text("공유")
+                                    Text("목록")
                                         .font(.system(size: 15, weight: .semibold))
                                 }
                                 .frame(maxWidth: .infinity)
@@ -187,13 +182,10 @@ struct DreamResultView: View {
                                         .stroke(Theme.decorCircle1, lineWidth: 1.5)
                                 )
                             }
-                            .disabled(viewModel.generatedImage == nil || viewModel.isGeneratingImage)
 
                             Button {
                                 viewModel.reset()
-                                dismiss()
-                                dismiss()
-                                dismiss()
+                                path.removeAll()
                             } label: {
                                 HStack(spacing: 6) {
                                     Image(systemName: "arrow.counterclockwise")
@@ -221,9 +213,16 @@ struct DreamResultView: View {
         }
         .navigationTitle("당신의 꿈")
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: $showShareSheet) {
-            if let image = imageToShare {
-                ShareSheet(items: [image, viewModel.recognizedText])
+        .navigationBarBackButtonHidden(true)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    path.removeAll()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(Color(hex: "0284C7"))
+                }
             }
         }
         .alert("저장 완료", isPresented: $viewModel.showSaveConfirmation) {
@@ -256,6 +255,6 @@ struct ShareSheet: UIViewControllerRepresentable {
             let vm = DreamViewModel()
             vm.recognizedText = "비가 많이 오는 날에 빗소리를 들으며 수업을 듣는 꿈을 꾸었다"
             return vm
-        }())
+        }(), path: .constant([]))
     }
 }
