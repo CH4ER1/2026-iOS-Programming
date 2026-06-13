@@ -3,6 +3,10 @@
 말로 풀어낸 꿈을 AI 이미지로 그려주는 iOS 앱입니다.
 음성으로 꿈 이야기를 들려주면 텍스트로 변환되고, OpenAI 이미지 생성 모델이 그 내용을 바탕으로 그림을 만들어 줍니다. 생성된 꿈은 감정 태그와 함께 기록되어 나만의 "꿈 일기"로 쌓입니다.
 
+## 데모 영상
+
+[![Dream Canvas 데모](https://img.youtube.com/vi/stRsfrJzwGI/0.jpg)](https://youtu.be/stRsfrJzwGI)
+
 ## 주요 기능
 
 - **음성으로 꿈 기록**: Apple Speech Framework로 음성을 실시간 텍스트로 변환
